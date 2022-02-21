@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (C) Neoxyne, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -30,7 +30,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Slot")
 	void SetSlotColor(const FSlateBrush& Brush);
-
 
 
 
