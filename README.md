@@ -14,4 +14,4 @@ This completely relies on UMG Widgets which allows you to use scrollbars.
 + Not Replicated
 
 #### Preview
-![](Preview.gif)
+# ![](https://raw.githubusercontent.com/imneoxyne/grid-inventory-sample/master/Preview.gif)
