@@ -5,6 +5,7 @@
 #include "Item.h"
 #include "SlotWidget.h"
 #include "DraggedSlotWidget.h"
+#include "GridWidget.h"
 #include "Slot_DragDropOperation.h"
 
 UCellWidget::UCellWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
@@ -23,7 +24,7 @@ void UCellWidget::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDrop
 	check(DraggedSlot != nullptr);
 
 	// reset all grid cells to their default color
-	for (UCellWidget* Cell : CellsWidgets)
+	for (UCellWidget* Cell : ParentWidget->CellsWidgets)
 	{
 		Cell->SetCellColor(Cell->DefaultCellColor);
 	}
@@ -37,12 +38,12 @@ void UCellWidget::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDrop
 		for (FPoint2D& Element : ItemSizeInCells)
 		{
 			FPoint2D TargetCell = Element + Coordinates;
-			const int32 Index = GetCellIndex(TargetCell);
+			const int32 Index = ParentWidget->GetCellIndex(TargetCell);
 
-			if (Index >= 0 && Index < CellsWidgets.Num())
+			if (Index >= 0 && Index < ParentWidget->CellsWidgets.Num())
 			{
 				// Only change cell color if its within grid boundaries
-				CellsWidgets[Index]->SetCellColor(ValidCellPlacementColor);
+				ParentWidget->CellsWidgets[Index]->SetCellColor(ValidCellPlacementColor);
 			}
 
 			//UE_LOG(LogTemp, Warning, TEXT("Element (%d,%d). TargetCell (%d,%d). Index (%d)"), Element.X, Element.Y, TargetCell.X, TargetCell.Y, Index);
@@ -55,18 +56,17 @@ void UCellWidget::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDrop
 		for (FPoint2D& Element : ItemSizeInCells)
 		{
 			FPoint2D TargetCell = Element + Coordinates;
-			int32 Index = GetCellIndex(TargetCell);
+			const int32 Index = ParentWidget->GetCellIndex(TargetCell);
 
-			if (Index >= 0 && Index < CellsWidgets.Num())
+			if (Index >= 0 && Index < ParentWidget->CellsWidgets.Num())
 			{
 				// Only change cell color if its within grid boundaries
-				CellsWidgets[Index]->SetCellColor(InvalidCellPlacementColor);
+				ParentWidget->CellsWidgets[Index]->SetCellColor(InvalidCellPlacementColor);
 			}
 
 			//UE_LOG(LogTemp, Warning, TEXT("Element (%d,%d). TargetCell (%d,%d). Index (%d)"), Element.X, Element.Y, TargetCell.X, TargetCell.Y, Index);
 		}
 	}
-	
 }
 
 void UCellWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -74,7 +74,7 @@ void UCellWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDrag
 	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
 
 	// reset all grid cells to their default color
-	for (UCellWidget* Cell : CellsWidgets)
+	for (UCellWidget* Cell : ParentWidget->CellsWidgets)
 	{
 		Cell->SetCellColor(Cell->DefaultCellColor);
 	}
@@ -85,7 +85,7 @@ void UCellWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 
 	// reset all grid cells to their default color
-	for (UCellWidget* Cell : CellsWidgets)
+	for (UCellWidget* Cell : ParentWidget->CellsWidgets)
 	{
 		Cell->SetCellColor(Cell->DefaultCellColor);
 	}
@@ -93,10 +93,10 @@ void UCellWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, U
 
 bool UCellWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+	bool bDroppedSomething = Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
 	// reset all grid cells to their default color
-	for (UCellWidget* Cell : CellsWidgets)
+	for (UCellWidget* Cell : ParentWidget->CellsWidgets)
 	{
 		Cell->SetCellColor(Cell->DefaultCellColor);
 	}
@@ -108,35 +108,19 @@ bool UCellWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent
 	check(DraggedSlot != nullptr);
 
 	DraggedSlot->SlotData.Item->GetOwnerInventory()->MoveItem(DraggedSlot->SlotData, Coordinates);
+	bDroppedSomething |= true;
 
-	return true;
+	return bDroppedSomething;
 }
 
-void UCellWidget::SetCellsWidgets(const TArray<UCellWidget*>& NewCellsWidgets)
-{
-	CellsWidgets = NewCellsWidgets;
-}
-
-void UCellWidget::SetData(const FPoint2D& NewCoordinates, const float NewSize)
+void UCellWidget::SetData(const FPoint2D& NewCoordinates, const float NewSize, UGridWidget* NewParentWidget)
 {
 	Coordinates = NewCoordinates;
 	CellSize = NewSize;
+	ParentWidget = NewParentWidget;
 
 	OnDataReceived();
 	  
     SetCellSize(NewSize);
     SetCellColor(DefaultCellColor);
-}
-
-int32 UCellWidget::GetCellIndex(const FPoint2D& InCoordinates)
-{
-	for (int32 Index = 0; Index < CellsWidgets.Num(); Index++)
-	{
-		if (CellsWidgets[Index]->Coordinates == InCoordinates)
-		{
-			return Index;
-		}
-	}
-
-	return INDEX_NONE;
 }

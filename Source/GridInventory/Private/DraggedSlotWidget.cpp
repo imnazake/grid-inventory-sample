@@ -11,6 +11,7 @@ UDraggedSlotWidget::UDraggedSlotWidget(const FObjectInitializer& ObjectInitializ
 
 void UDraggedSlotWidget::SetData(const FSlot& NewData, const float InCellSize)
 {
+	//UItem* ItemCopy = DuplicateObject(NewData.Item, NewData.Item->GetOuter());
 	SlotData = NewData;
 	CellSize = InCellSize;
 

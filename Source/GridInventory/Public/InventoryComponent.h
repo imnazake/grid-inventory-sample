@@ -25,6 +25,13 @@ struct FPoint2D
 		Y = InY;
 	}
 
+	FPoint2D(const FPoint2D& Other)
+	{
+		X = Other.X;
+		Y = Other.Y;
+	}
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = 0, UIMin = 0))
 	int32 X;
 
@@ -63,6 +70,12 @@ struct FSlot
 	{
 		Item = InItem;
 		Quantity = InQuantity;
+	}
+
+	FSlot(const FSlot& Other)
+	{
+		Item = Other.Item;
+		Quantity = Other.Quantity;
 	}
 
 	UPROPERTY(BlueprintReadOnly)

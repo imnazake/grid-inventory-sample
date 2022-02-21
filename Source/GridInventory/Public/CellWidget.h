@@ -8,6 +8,8 @@
 #include "Blueprint/UserWidget.h"
 #include "CellWidget.generated.h"
 
+class UGridWidget;
+
 /**
  * 
  */
@@ -26,15 +28,9 @@ public:
 	virtual void NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
-	/** Stores grid cell widgets array from parent widget. */
-	void SetCellsWidgets(const TArray<UCellWidget*>& NewCellsWidgets);
-
-	/** Returns index of cell widget in cells widgets array from the specified cell coordinates. -1 if none found. */
-	int32 GetCellIndex(const FPoint2D& InCoordinates);
-
 
 	UFUNCTION(BlueprintCallable, Category = "Cell")
-	void SetData(const FPoint2D& NewCoordinates, const float NewSize);
+	void SetData(const FPoint2D& NewCoordinates, const float NewSize, UGridWidget* ParentWidget);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Cell")
 	void OnDataReceived();
@@ -54,10 +50,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Cell")
 	float CellSize;	
-	
-	// An array of all the grid cell widgets.
+
 	UPROPERTY(BlueprintReadOnly, Category = "Cell")
-	TArray<UCellWidget*> CellsWidgets;
+	UGridWidget* ParentWidget;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Cell")
 	FSlateBrush DefaultCellColor;

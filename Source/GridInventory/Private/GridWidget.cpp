@@ -14,7 +14,7 @@ UGridWidget::UGridWidget(const FObjectInitializer& ObjectInitializer) : Super(Ob
 void UGridWidget::SetData(UInventoryComponent* NewInventory)
 {
 	Inventory = NewInventory;
-	OnPreInitialize();
+	OnPrePopulateData();
 	NativeOnDataReceived();
 	OnDataReceived();
 }
@@ -23,7 +23,7 @@ void UGridWidget::NativeOnDataReceived()
 {
 	if (!Inventory->OnInventoryUpdated.IsBoundToObject(this))
 	{
-		Inventory->OnInventoryUpdated.AddUObject(this, &ThisClass::NativeOnInventoryUpdate);
+		Inventory->OnInventoryUpdated.AddUObject(this, &ThisClass::NativeOnInventoryUpdated);
 	}
 
 	CellsWidgets.Empty();
@@ -35,16 +35,11 @@ void UGridWidget::NativeOnDataReceived()
 		check(CellWidget != nullptr);
 
 		CellsWidgets.Add(CellWidget);
-		CellWidget->SetData(Coordinates, Inventory->CellSize);
+		CellWidget->SetData(Coordinates, Inventory->CellSize, this);
 		CellWidget->SetCellSize(Inventory->CellSize);
 		CellWidget->SetCellColor(CellWidget->DefaultCellColor);
 
 		OnCellCreated(CellWidget);
-	}
-
-	for (UCellWidget* CellWidget : CellsWidgets)
-	{
-		CellWidget->SetCellsWidgets(CellsWidgets);
 	}
 
 	for (const FSlot& Data: Inventory->Slots)
@@ -53,16 +48,19 @@ void UGridWidget::NativeOnDataReceived()
 		check(SlotWidget != nullptr);
 
 		SlotsWidgets.Add(SlotWidget);
-		SlotWidget->SetData(Data);
+		SlotWidget->SetData(Data, this);
 		SlotWidget->SetSlotSize(Inventory->CellSize);
 
 		OnSlotCreated(SlotWidget);
 	}
 }
 
-void UGridWidget::NativeOnInventoryUpdate()
+void UGridWidget::NativeOnInventoryUpdated()
 {
-	OnPreUpdateInventory();
+	for (USlotWidget* SlotWidget: SlotsWidgets)
+	{
+		OnSlotRemoved(SlotWidget);
+	}
 
 	SlotsWidgets.Empty();
 
@@ -72,10 +70,23 @@ void UGridWidget::NativeOnInventoryUpdate()
 		check(SlotWidget != nullptr);
 
 		SlotsWidgets.Add(SlotWidget);
-		SlotWidget->SetData(Data);
+		SlotWidget->SetData(Data, this);
 		SlotWidget->SetSlotSize(Inventory->CellSize);
 		OnSlotCreated(SlotWidget);
 	}
 	
 	OnInventoryUpdated();
+}
+
+int32 UGridWidget::GetCellIndex(const FPoint2D& InCoordinates)
+{
+	for (int32 Index = 0; Index < CellsWidgets.Num(); Index++)
+	{
+		if (CellsWidgets[Index]->Coordinates == InCoordinates)
+		{
+			return Index;
+		}
+	}
+
+	return INDEX_NONE;
 }

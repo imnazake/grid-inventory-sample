@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InventoryComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "GridWidget.generated.h"
 
@@ -30,7 +31,7 @@ public:
 	void OnDataReceived();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Grid")
-	void OnPreInitialize();
+	void OnPrePopulateData();
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Grid")
 	void OnCellCreated(UCellWidget* Widget);
@@ -39,14 +40,17 @@ public:
 	void OnSlotCreated(USlotWidget* Widget);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Grid")
-	void OnPreUpdateInventory();
+	void OnSlotRemoved(USlotWidget* Widget);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Grid")
 	void OnInventoryUpdated();
 
 
 	void NativeOnDataReceived();
-	void NativeOnInventoryUpdate();
+	void NativeOnInventoryUpdated();
+
+	/** Returns index of cell widget in cells widgets array from the specified cell coordinates. -1 if none found. */
+	int32 GetCellIndex(const FPoint2D& InCoordinates);
 
 
 	UPROPERTY(BlueprintReadOnly, Category = "Grid")
