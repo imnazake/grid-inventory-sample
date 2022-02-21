@@ -1,4 +1,4 @@
-// Copyright (C) Neoxyne, Inc. All Rights Reserved.
+// Copyright (C) Neoxyne. All Rights Reserved.
 
 #pragma once
 

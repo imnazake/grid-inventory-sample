@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright (C) Neoxyne. All Rights Reserved.
 
 #include "InventoryComponent.h"
 #include "Item.h"
