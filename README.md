@@ -2,7 +2,7 @@
 
 A grid based inventory system (Tetris style) for unreal engine.
 <br>
-This completely relies on UMG widgets. Nothing being drawn on HUD.
+This completely relies on UMG widgets. Nothing is drawn on HUD.
 
 ##### Engine Version
 + 4.26.2 or higher
