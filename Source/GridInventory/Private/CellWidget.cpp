@@ -108,6 +108,7 @@ bool UCellWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent
 	check(DraggedSlot != nullptr);
 
 	DraggedSlot->SlotData.Item->GetOwnerInventory()->MoveItem(DraggedSlot->SlotData, Coordinates);
+
 	bDroppedSomething |= true;
 
 	return bDroppedSomething;

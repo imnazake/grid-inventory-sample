@@ -21,7 +21,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable, Category = "DraggedSlot")
-	void SetData(const FSlot& NewData, float InCellSize);
+	void SetData(const FSlot NewData, float InCellSize);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "DraggedSlot")
 	void OnDataReceived();
@@ -30,7 +30,7 @@ public:
 	void SetSlotSize(float Size);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "DraggedSlot")
-	void OnItemSizeChanged();
+	void OnItemRotated();
 
 
 	UPROPERTY(BlueprintReadOnly, Category = "DraggedSlot")
@@ -38,5 +38,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Category = "DraggedSlot")
 	float CellSize;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "DraggedSlot")
+	UItem* CopyItem;
 
 };

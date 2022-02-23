@@ -9,17 +9,18 @@ UDraggedSlotWidget::UDraggedSlotWidget(const FObjectInitializer& ObjectInitializ
 
 }
 
-void UDraggedSlotWidget::SetData(const FSlot& NewData, const float InCellSize)
+void UDraggedSlotWidget::SetData(const FSlot NewData, const float InCellSize)
 {
-	//UItem* ItemCopy = DuplicateObject(NewData.Item, NewData.Item->GetOuter());
+	// CopyItem = DuplicateObject(NewData.Item, NewData.Item->GetOuter());
+	// CopyItem->OnConstruct();
 	SlotData = NewData;
 	CellSize = InCellSize;
 
 	OnDataReceived();
 	SetSlotSize(CellSize);
 
-	if (!SlotData.Item->OnItemSizeChanged.IsBoundToObject(this))
+	if (!SlotData.Item->OnItemRotated.IsBoundToObject(this))
 	{
-		SlotData.Item->OnItemSizeChanged.AddUObject(this, &ThisClass::OnItemSizeChanged);
+		SlotData.Item->OnItemRotated.AddUObject(this, &ThisClass::OnItemRotated);
 	}
 }
