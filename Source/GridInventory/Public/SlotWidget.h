@@ -45,4 +45,6 @@ public:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Slot")
 	UGridWidget* ParentWidget;
+
+
 };

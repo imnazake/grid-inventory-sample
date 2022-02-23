@@ -38,19 +38,19 @@ struct FPoint2D
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ClampMin = 0, UIMin = 0))
 	int32 Y;
 
-	bool operator==(const FPoint2D& Other)
+	bool operator==(const FPoint2D& Other) const
 	{
 		return (X == Other.X && Y == Other.Y);
 	}
 
-	FPoint2D operator+(const FPoint2D& Other)
+	FPoint2D operator+(const FPoint2D& Other) const
 	{
 		return FPoint2D(X + Other.X, Y + Other.Y);
 	}
 
-	bool IsValid()
+	bool IsValid() const
 	{
-		return X >= 0 && Y >= 0;
+		return X >= 0 && Y >= 0; 
 	}
 
 };
@@ -84,7 +84,7 @@ struct FSlot
 	UPROPERTY(BlueprintReadOnly)
 	int32 Quantity;
 
-	bool operator==(const FSlot& Other)
+	bool operator==(const FSlot& Other) const
 	{
 		return Item == Other.Item && Quantity == Other.Quantity;
 	}
@@ -101,6 +101,7 @@ class GRIDINVENTORY_API UInventoryComponent : public UActorComponent
 public:	
 
 	UInventoryComponent();
+	UInventoryComponent(const FObjectInitializer& ObjectInitializer);
 
 	virtual void BeginPlay() override;
 
@@ -177,6 +178,7 @@ public:
 
 	/**
 	 * Adds a new item instance to the inventory.
+	 * @note Automatically tries to rotate the item if it doesn't fit.
 	 *
 	 * @param	ItemClass		Item class we are trying to add/instantiate.
 	 * @param	Quantity		Quantity to add.
@@ -200,12 +202,15 @@ public:
 	/**
 	 * Moves an existing item from to the specified grid coordinates.
 	 *
-	 * @param	Source			Source grid cell coordinates.
+	 * @param	Slot			Source slot data.
 	 * @param	Destination		Destination grid cell coordinates.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void MoveItem(const FSlot& Slot, const FPoint2D& Destination);
 
+	/** Notifies all listeners that the inventory has been updated. */
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void HandleInventoryUpdate();
 
 private:
 
@@ -217,8 +222,5 @@ private:
 	 * @return a UItem instance of the specified class. nullptr otherwise.
 	 */
 	UItem* CreateItem(TSubclassOf<UItem> ItemClass);
-
-	/** Notifies all listeners that the inventory has been updated. */
-	void HandleInventoryUpdate();
 		
 };

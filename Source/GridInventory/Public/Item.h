@@ -7,7 +7,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Item.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnItemSizeChangedSignature);
+DECLARE_MULTICAST_DELEGATE(FOnItemRotatedSignature);
 
 /**
  * 
@@ -21,11 +21,11 @@ public:
 
 	UItem(const FObjectInitializer& ObjectInitializer);
 
-
-	/** Called when we create an instance of a UItem using CreateItem(). @see InventoryComponent. */
+	/** Called when we create an instance of a UItem. @see InventoryComponent::CreateItem() */
 	void OnConstruct();
 
 	/** Stores the first cell coordinates (top-left cell of our item) where we stored this item in the grid. */
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	void SetStartCoordinates(const FPoint2D& Coordinates);
 
 	/** How big is this item in columns and rows (X=Columns, Y=Rows). */
@@ -46,18 +46,18 @@ public:
 	}
 
 	/**
-	* Calculates how many cells are needed to store this item based on Size.
+	* Calculates how many cells are needed to store this item based on @Size.
 	* 
-	* @return An array of cell(s) coordinates relative to StartCoordinates.
+	* @return An array of cell(s) coordinates relative to @StartCoordinates.
 	*/
 	UFUNCTION(BlueprintPure, Category = "Item")
 	TArray<FPoint2D> CalcItemSize();
 
-	/** 
+	/**
+	* Checks whether we can rotate this item.
 	* @return true, if we can rotate this item.
 	* 
-	* @note this currently returns true only for rectangle-shaped items.
-	* return true, if you want to rotate any item.
+	* @note Currently only rectangle-shaped items can be rotated.
 	*/
 	UFUNCTION(BlueprintPure, Category = "Item")
 	bool CanRotate();
@@ -66,17 +66,21 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Item")
 	void Rotate();
 
-	UFUNCTION(BlueprintCallable, Category = "Item")
+	UFUNCTION(BlueprintPure, Category = "Item")
 	UInventoryComponent* GetOwnerInventory()
 	{
 		return OwnerInventory;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = "Item")
 	void SetOwningInventory(UInventoryComponent* NewInventory);
 
+	/** Notifies all listeners that the item has been rotated. */
+	UFUNCTION(BlueprintCallable, Category = "Item")
+	void HandleItemRotation();
 
-	void HandleItemSizeChanged();
-	FOnItemSizeChangedSignature OnItemSizeChanged;
+	/** Called whenever an item is rotated. */
+	FOnItemRotatedSignature OnItemRotated;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
@@ -99,6 +103,6 @@ private:
 	uint8 bIsRotated : 1;
 
 	/** Item's owning inventory component reference. */
-	UPROPERTY(Transient)
+	UPROPERTY(Transient, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Item")
 	UInventoryComponent* OwnerInventory;
 };

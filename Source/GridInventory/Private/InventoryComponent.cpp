@@ -5,8 +5,13 @@
 
 UInventoryComponent::UInventoryComponent()
 {
-	GridSize = FPoint2D(5, 5);
-	CellSize = 50.0f;
+	GridSize = FPoint2D(10, 10);
+	CellSize = 70.0f;
+}
+
+UInventoryComponent::UInventoryComponent(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+
 }
 
 void UInventoryComponent::BeginPlay()
@@ -111,8 +116,7 @@ FPoint2D UInventoryComponent::GetFreeCellThatFitsItem(TArray<FPoint2D> const& Si
 bool UInventoryComponent::AddItem(const TSubclassOf<UItem> ItemClass, const int32 Quantity)
 {
 	UItem* ItemInstance = CreateItem(ItemClass);
-	
-	FPoint2D Coordinates = GetFreeCellThatFitsItem(ItemInstance->GetSizeInCells());
+	const FPoint2D Coordinates = GetFreeCellThatFitsItem(ItemInstance->GetSizeInCells());
 
 	if (Coordinates.IsValid())
 	{
@@ -130,7 +134,7 @@ bool UInventoryComponent::AddItem(const TSubclassOf<UItem> ItemClass, const int3
 	{
 		ItemInstance->Rotate();
 
-		FPoint2D RotatedCoordinates = GetFreeCellThatFitsItem(ItemInstance->GetSizeInCells());
+		const FPoint2D RotatedCoordinates = GetFreeCellThatFitsItem(ItemInstance->GetSizeInCells());
 
 		if (RotatedCoordinates.IsValid())
 		{
@@ -157,7 +161,7 @@ bool UInventoryComponent::RemoveItem(int32 UniqueId, int32 Quantity)
 
 void UInventoryComponent::MoveItem(const FSlot& Slot, const FPoint2D& Destination)
 {
-	for (FSlot& Element : Slots)
+	for (const FSlot& Element : Slots)
 	{
 		if (Element == Slot)
 		{

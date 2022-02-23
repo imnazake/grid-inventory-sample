@@ -62,7 +62,8 @@ void UItem::Rotate()
 
 		bIsRotated = false;
 
-		HandleItemSizeChanged();
+		HandleItemRotation();
+		//OwnerInventory->HandleInventoryUpdate();
 
 		return;
 	}
@@ -80,7 +81,8 @@ void UItem::Rotate()
 
 	bIsRotated = true;
 
-	HandleItemSizeChanged();
+	HandleItemRotation();
+	//OwnerInventory->HandleInventoryUpdate();
 }
 
 void UItem::SetOwningInventory(UInventoryComponent* NewInventory)
@@ -88,7 +90,7 @@ void UItem::SetOwningInventory(UInventoryComponent* NewInventory)
 	OwnerInventory = NewInventory;
 }
 
-void UItem::HandleItemSizeChanged()
+void UItem::HandleItemRotation()
 {
-	OnItemSizeChanged.Broadcast();
+	OnItemRotated.Broadcast();
 }
