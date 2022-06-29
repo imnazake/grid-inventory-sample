@@ -3,7 +3,7 @@
 A grid based inventory system for unreal engine users.
 You are free to use and/or modify this project however you like.
 
-- You can find updated project here: (https://github.com/imneoxyne/grid-inventory-plugin)
+- You can find updated project here: [Update](https://github.com/imneoxyne/grid-inventory-plugin)
 
 ##### Engine Version
 + 4.26.2 or higher
